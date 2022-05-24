@@ -1,22 +1,32 @@
 // Next.js API route support: https://nextjs.org/docs/api-routes/introduction
 import type { NextApiRequest, NextApiResponse } from 'next';
+import { db, seedData } from '../../database';
+import { Entry } from '../../models';
 
 type Data = {
   success: boolean;
   message: string;
-  method: string;
 };
 
-export default function handler(
+export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse<Data>
 ) {
+  if (process.env.NODE_ENV === 'production') {
+    return res.status(401).json({
+      success: false,
+      message: 'Este endpoint es solo para desarrollo',
+    });
+  }
 
-  console.log(process.env);
+  await db.connect();
+  await Entry.deleteMany();
+  await Entry.insertMany(seedData.entries);
+
+  await db.disconnect();
 
   res.status(200).json({
     success: true,
-    message: 'All right',
-    method: req.method || 'Sin metodo',
+    message: 'Proceso del seed realizado correctamente',
   });
 }

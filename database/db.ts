@@ -28,12 +28,14 @@ export const connect = async () => {
     await mongoose.disconnect();
   }
 
-  await mongoose.connect('....');
+  await mongoose.connect(process.env.MONGO_URL || '');
   mongoConnection.isConnected = 1;
-  console.log('Conectado a MongoDB');
+  console.log('Conectado a MongoDB: ', process.env.MONGO_URL);
 };
 
 export const disconnect = async () => {
+
+  if (process.env.NODE_ENV === 'development') return;
 
   if (mongoConnection.isConnected === 0) return;
 
