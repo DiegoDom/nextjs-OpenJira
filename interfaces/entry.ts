@@ -6,3 +6,8 @@ export interface Entry {
 }
 
 export type EntryStatus = 'pending' | 'in-progress' | 'finished';
+
+export interface EntryApiResp {
+  success: boolean;
+  data: Entry[];
+}
